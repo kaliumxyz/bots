@@ -14,11 +14,13 @@ const log = require('k-log')(logStream);
 
 const rl = readline.createInterface({
 	input: process.stdin,
-	output: process.stdout
+	output: process.stdout,
+	terminal: true
 });
 
 client.on('ready', () => {
 	log('bot initiated');
+	rl.prompt();
 });
 
 client.on('message', message => {
@@ -41,6 +43,7 @@ client.on('message', message => {
 	}
 });
 
+
 rl.on('line', line => {
 	switch(line){
 		case('status'):
@@ -48,14 +51,21 @@ rl.on('line', line => {
 		break;
 		case('help'):
 		console.log(`
-			status - gets the status number.
-			users - logs the users the bot has access to at any given moment.
-			`);
+status - gets the status number.
+users - logs the users the bot has access to at any given moment.
+			`.trim());
 		break;
 		case('users'):
 		client.users.forEach(x => console.log(x));
 		break;
+		case (line.match(/^send.*/) || {}).input:
+		console.log('this feature has not yet been implemented')
+		break;
+		default:
+		console.log('we have not yet implemented this feature, use "help" for an overview of commands')
+		break;
 	}
+	rl.prompt();
 })
 
 
