@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const readline = require('readline');
-const config = require('.config.json')
+const config = require('./.config.json')
 
 const rl = readline.createInterface({
   input: process.stdin,
