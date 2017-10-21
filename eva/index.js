@@ -2,11 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
+const MarkovChain = require('markovchain');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
 /* configurtation */
 const config = require('./.config.json') || { api: void(0) };
+const dataset = fs.readFileSync('dataset.txt', 'utf-8');
+const markov = new MarkovChain(dataset);
 
 /* logging */
 const logStream = fs.createWriteStream(path.join(__dirname, `application.log`), { flags: 'a' });
@@ -18,6 +21,8 @@ const rl = readline.createInterface({
 	terminal: true
 });
 
+let reply = _ => "yes!"
+
 client.on('ready', () => {
 	log('bot initiated');
 	rl.prompt();
@@ -26,20 +31,9 @@ client.on('ready', () => {
 client.on('message', message => {
 	// log anything posted
 	log(`user: ${message.author.username}, ID: ${message.author.id}`, message.cleanContent);
-	let msgTimeout;
 
 	if (message.channel.type === "dm" && !message.author.bot) {
-		// rl.question('would you like to reply?', x => {
-		// 	message.reply(x);
-		// 	rl.close();
-		// 	clearTimeout(msgTimeout);
-		// });
-
-		// setTimeout(_ => {
-			// rl.close();
-			message.reply("yes!");
-		// }, 4000);
-
+		message.reply(markov.end(Math.ceil(Math.random()*10%3)).process());
 	}
 });
 
@@ -57,6 +51,9 @@ users - logs the users the bot has access to at any given moment.
 		break;
 		case('users'):
 		client.users.forEach(x => console.log(x));
+		break;
+		case (line.match(/^mode.*/) || {}).input:
+		reply = line.split(' ')[1]
 		break;
 		case (line.match(/^send.*/) || {}).input:
 		console.log('this feature has not yet been implemented')

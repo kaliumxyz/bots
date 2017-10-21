@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.2.1",
-    "k-log": "^0.7.0"
+    "k-log": "^0.7.0",
+    "markovchain": "^1.0.2"
   }
 }
