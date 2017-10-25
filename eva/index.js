@@ -33,7 +33,7 @@ client.on('message', message => {
 	log(`user: ${message.author.username}, ID: ${message.author.id}`, message.cleanContent);
 
 	if (message.channel.type === "dm" && !message.author.bot) {
-		message.reply(markov.end(Math.ceil(Math.random()*10%3)).process());
+		message.reply(markov.end(Math.ceil(Math.random()*100%40)).process());
 	}
 });
 
