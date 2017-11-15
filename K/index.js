@@ -15,12 +15,19 @@ const connection = new euphoriaConnection(config.room, config.human, "wss://euph
 
 /* logging */
 const logStream = fs.createWriteStream(path.join(__dirname, `application.log`), { flags: 'a' });
-const log = require('k-log')(logStream);
+function log(...text) {
+		text.forEach(text => {
+			process.stdout.write(`\n${text}`)
+			logStream.write(`${Date.now()} - ${JSON.stringify(text)}\n`)
+		})
+	}
 
 /* memory */
 const memory = [];
+const stack = [];
 
 const rl = readline.createInterface({
+	prompt: `${config.nick}>`,
 	input: process.stdin,
 	output: process.stdout,
 	terminal: true
@@ -29,26 +36,32 @@ const rl = readline.createInterface({
 connection.on('send-event', message => {
 	// log anything posted
 	const data = message.data;
-	log(`user: ${data.sender.name}, ${data.sender.id}`, data.content);
+	log(`${data.sender.name}: ${data.sender.id}`, data.content);
 	memory.push(data);
 
 	if (new RegExp(`${config.nick}`).test(data.content))
-		setTimeout( () => {
+		stack.push(setTimeout( () => {
 			connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
-		})
+			stack.shift()
+		}, 1000 * config.reply.delay))
 	if (new RegExp(`^!kill @${config.nick}`).test(data.content))
 		process.exit();
 
+	rl.prompt();
 });
 
 
 rl.on('line', line => {
 	if (line.startsWith('quit'))
 		process.exit();
-	if (line.startsWith('post'))
+	if (line.startsWith('post')){
 		connection.post(line.slice(5));
-	if (line.startsWith('reply'))
+		clearTimeout(stack.shift());
+	}
+	if (line.startsWith('reply')){
 		connection.post(line.slice(6), memory[memory.length-1].id);
+		clearTimeout(stack.shift());
+	}
 
 	rl.prompt();
 

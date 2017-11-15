@@ -2,5 +2,8 @@
 	"nick": "K",
 	"room": "test",
 	"dataset": "dataset.txt",
-	"human": 1
+	"human": 1,
+	"reply": {
+		"delay": 5
+	}
 }

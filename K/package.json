@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "euphoria-connection": "^0.5.2",
-    "k-log": "^0.7.0",
     "markovchain": "^1.0.2"
   }
 }
