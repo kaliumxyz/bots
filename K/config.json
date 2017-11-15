@@ -1,5 +1,6 @@
 {
 	"nick": "K",
-	"room": "xkcd",
-	"dataset": "dataset.txt"
+	"room": "test",
+	"dataset": "dataset.txt",
+	"human": 1
 }

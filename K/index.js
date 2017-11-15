@@ -6,17 +6,19 @@ const MarkovChain = require('markovchain');
 const euphoriaConnection = require('euphoria-connection');
 
 /* configurtation */
-// this doesn't actually work for replacing the default, left in because some update will probably add it
-const config = require('./config.json') || { nick: "K", room: "test", dataset: "dataset.txt" };
+const config = require('./config.json');
 // reads the entire dataset into RAM (will crash if your ram is smaller then the dataset)
 const dataset = fs.readFileSync(config.dataset, 'utf-8');
 const markov = new MarkovChain(dataset);
 
-const connection = new euphoriaConnection(config.room, 1);
+const connection = new euphoriaConnection(config.room, config.human, "wss://euphoria.io", { origin: "https://euphoria.io" });
 
 /* logging */
 const logStream = fs.createWriteStream(path.join(__dirname, `application.log`), { flags: 'a' });
 const log = require('k-log')(logStream);
+
+/* memory */
+const memory = [];
 
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -26,21 +28,27 @@ const rl = readline.createInterface({
 
 connection.on('send-event', message => {
 	// log anything posted
-	log(`user: ${message.data.sender.name}, ${message.data.sender.id}`, message.data.content);
+	const data = message.data;
+	log(`user: ${data.sender.name}, ${data.sender.id}`, data.content);
+	memory.push(data);
 
-	if (new RegExp(`${config.nick}`).test(message.data.content))
-		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), message.data.id);
-	if (new RegExp(`^!kill @${config.nick}`).test(message.data.content))
+	if (new RegExp(`${config.nick}`).test(data.content))
+		setTimeout( () => {
+			connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
+		})
+	if (new RegExp(`^!kill @${config.nick}`).test(data.content))
 		process.exit();
 
 });
 
 
 rl.on('line', line => {
-	if (/^quit/.test(line))
+	if (line.startsWith('quit'))
 		process.exit();
-	if (/^post/.test(line))
-		connection.post(line)
+	if (line.startsWith('post'))
+		connection.post(line.slice(5));
+	if (line.startsWith('reply'))
+		connection.post(line.slice(6), memory[memory.length-1].id);
 
 	rl.prompt();
 
@@ -52,4 +60,4 @@ connection.once('ready', () => {
 	rl.prompt();
 })
 
-connection.on('message', console.log)
+connection.on('close', (...ev) => log('closed:', ev));

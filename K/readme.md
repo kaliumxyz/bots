@@ -8,7 +8,8 @@ configure a config.json file containing the nick, room, and dataset (defaults ar
 {
 	"nick": "K",
 	"room": "xkcd",
-	"dataset": "dataset.txt"
+	"dataset": "dataset.txt",
+	"human": 1
 }
 ```
 A default dataset is not included and should be added.
