@@ -17,7 +17,7 @@ const connection = new euphoriaConnection(config.room, config.human, "wss://euph
 const logStream = fs.createWriteStream(path.join(__dirname, `application.log`), { flags: 'a' });
 function log(...text) {
 		text.forEach(text => {
-			process.stdout.write(`\n${text}`)
+			process.stdout.write(`\n${text}\n`)
 			logStream.write(`${Date.now()} - ${JSON.stringify(text)}\n`)
 		})
 	}
@@ -36,10 +36,10 @@ const rl = readline.createInterface({
 connection.on('send-event', message => {
 	// log anything posted
 	const data = message.data;
-	log(`${data.sender.name}: ${data.sender.id}`, data.content);
+	log(`${data.sender.name}: ${data.sender.id}> ${data.content}`);
 	memory.push(data);
 
-	if (new RegExp(`${config.nick}`).test(data.content))
+	if (new RegExp(`!@${config.nick}`).test(data.content))
 		stack.push(setTimeout( () => {
 			connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
 			stack.shift()
