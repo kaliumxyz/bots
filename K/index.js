@@ -28,15 +28,22 @@ connection.on('send-event', message => {
 	// log anything posted
 	log(`user: ${message.data.sender.name}, ${message.data.sender.id}`, message.data.content);
 
-	if (/@K/.test(message.data.content))
+	if (new RegExp(`${config.nick}`).test(message.data.content))
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), message.data.id);
+	if (new RegExp(`^!kill @${config.nick}`).test(message.data.content))
+		process.exit();
+
 });
 
 
 rl.on('line', line => {
-	if (/quit/.test(line))
+	if (/^quit/.test(line))
 		process.exit();
+	if (/^post/.test(line))
+		connection.post(line)
+
 	rl.prompt();
+
 })
 
 connection.once('ready', () => {
@@ -44,3 +51,5 @@ connection.once('ready', () => {
 	log('bot initiated');
 	rl.prompt();
 })
+
+connection.on('message', console.log)
