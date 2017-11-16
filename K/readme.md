@@ -24,20 +24,20 @@ It will reply with any @mentions to the set nickname with a generated reply of 2
 
 EDIT: its now also a functional CLI for euphoria.io (heim).
 There are no prefixes to commands, all commands are declarative english, the commands are as follows:
-- post
+### post
 Post a single post to the root thread.
 ```
 K> post Hi guys :D
 ```
 
-- reply
+### reply
 Reply to the last message send.
 ```
 xyzzy: how are you?
 K> reply Good :D
 ```
 
-- quit
+### quit
 Quits the program entirely.
 
 ## tests
