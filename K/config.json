@@ -4,6 +4,7 @@
 	"dataset": "dataset.txt",
 	"human": 1,
 	"reply": {
-		"delay": 5
+		"delay": 5,
+		"override": true
 	}
 }

@@ -19,12 +19,12 @@ function log(...text) {
 		text.forEach(text => {
 			process.stdout.write(`\n${text}\n`)
 			logStream.write(`${Date.now()} - ${JSON.stringify(text)}\n`)
-		})
+		});
 	}
 
 /* memory */
-const memory = [];
-const stack = [];
+const memory = []; // post memory
+const stack = []; // planned event stack (timeouts) to allow us to override default acctions from CLI
 
 const rl = readline.createInterface({
 	prompt: `${config.nick}>`,
@@ -40,10 +40,12 @@ connection.on('send-event', message => {
 	memory.push(data);
 
 	if (new RegExp(`!@${config.nick}`).test(data.content))
-		stack.push(setTimeout( () => {
-			connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
-			stack.shift()
-		}, 1000 * config.reply.delay))
+		if(config.override)
+			stack.push(setTimeout( () => {
+				connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
+				stack.shift()
+			}, 1000 * config.reply.delay));
+
 	if (new RegExp(`^!kill @${config.nick}`).test(data.content))
 		process.exit();
 
@@ -56,6 +58,7 @@ rl.on('line', line => {
 		process.exit();
 	if (line.startsWith('post')){
 		connection.post(line.slice(5));
+		connection.once('send-reply', post => memory.push(post));
 		clearTimeout(stack.shift());
 	}
 	if (line.startsWith('reply')){
@@ -66,6 +69,7 @@ rl.on('line', line => {
 	rl.prompt();
 
 })
+
 
 connection.once('ready', () => {
 	connection.nick(config.nick)
