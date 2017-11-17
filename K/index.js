@@ -87,8 +87,11 @@ rl.on('line', line => {
 		clearTimeout(stack.shift());
 	}
 
-	if (command.startsWith('m'))
+	if (command.startsWith('m')) {
+		connection.nick(config.nick + " - BOT");
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
+		connection.nick(config.nick);
+	}
 
 	if (command.startsWith('n')){
 		config.nick = line;
