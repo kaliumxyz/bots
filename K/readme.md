@@ -11,6 +11,9 @@ configure a config.json file or use the defaults, the format is as below.
 	"dataset": "dataset.txt",
 	"human": 1,
 	"override": true,
+	"afk": {
+		"delay": 600
+	},
 	"reply": {
 		"delay": 5,
 		"type": "markov"
@@ -49,6 +52,26 @@ Reply to the last message send.
 ```
 xyzzy: how are you?
 K> reply Good :D
+```
+
+### markov
+Post a markov chain generated reply to the last post.
+```
+K> markov
+```
+
+### nick
+Sets the nick of the bot.
+```
+K> nick ><>
+><>>
+```
+
+### afk
+Affixes - AFK to the nick.
+```
+K> afk
+K - AFK>
 ```
 
 ### quit

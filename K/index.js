@@ -39,6 +39,7 @@ function log(...text) {
 /* memory */
 const memory = []; // post memory
 const stack = []; // planned event stack (timeouts) to allow us to override default acctions from CLI
+const afkCounter = config.afk.delay;
 
 const rl = readline.createInterface({
 	prompt: `${config.nick}>`,
@@ -70,19 +71,31 @@ connection.on('send-event', message => {
 rl.on('line', line => {
 	if (line.startsWith('quit'))
 		process.exit();
+
 	if (line.startsWith('post')){
 		connection.post(line.slice(5));
 		connection.once('send-reply', post => memory.push(post));
 		clearTimeout(stack.shift());
 	}
+
 	if (line.startsWith('reply')){
 		connection.post(line.slice(6), memory[memory.length-1].id);
 		clearTimeout(stack.shift());
 	}
 
 	if (line.startsWith('markov'))
-		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
+		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
+
+	if (line.startsWith('nick')){
+		config.nick = line.slice(5);
+		connection.nick(config.nick);
+	}
+
+	if (line.startsWith('afk'))
+		connection.nick(config.nick + " - AFK");
+
 	rl.prompt();
+	const afkCounter = config.afk.delay;
 
 });
 
@@ -91,6 +104,12 @@ connection.once('ready', () => {
 	connection.nick(config.nick)
 	log('bot initiated');
 	rl.prompt();
+
+	setInterval( () => {
+		if(!--afkCounter)
+			connection.nick(config.nick + " - AFK");
+
+	});
 });
 
 connection.on('close', (...ev) => log('closed:', ev));
