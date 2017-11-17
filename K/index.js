@@ -7,6 +7,19 @@ const euphoriaConnection = require('euphoria-connection');
 
 /* configurtation */
 const config = require('./config.json');
+
+// allows the user to override any setting in the config file by affixing --{setting} {option} when calling the script 
+const args = process.argv
+		.join()
+		.match(/-\w+,\w+/g);
+
+args.forEach( arg => {
+		let key = arg
+			.split(',')[0]
+			.replace('-','');
+		config[key] = arg.split(',')[1];
+	})
+
 // reads the entire dataset into RAM (will crash if your ram is smaller then the dataset)
 const dataset = fs.readFileSync(config.dataset, 'utf-8');
 const markov = new MarkovChain(dataset);
@@ -39,7 +52,7 @@ connection.on('send-event', message => {
 	log(`${data.sender.name}: ${data.sender.id}> ${data.content}`);
 	memory.push(data);
 
-	if (new RegExp(`!@${config.nick}`).test(data.content))
+	if (new RegExp(`@${config.nick}`).test(data.content))
 		if(config.override)
 			stack.push(setTimeout( () => {
 				connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
@@ -66,15 +79,17 @@ rl.on('line', line => {
 		clearTimeout(stack.shift());
 	}
 
+	if (line.startsWith('markov'))
+		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
 	rl.prompt();
 
-})
+});
 
 
 connection.once('ready', () => {
 	connection.nick(config.nick)
 	log('bot initiated');
 	rl.prompt();
-})
+});
 
 connection.on('close', (...ev) => log('closed:', ev));
