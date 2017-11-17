@@ -88,10 +88,11 @@ rl.on('line', line => {
 	}
 
 	if (command.startsWith('m')) {
+		let temp = config.nick;
 		nick(config.nick + " - BOT");
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
 		// add a delay so euph doesn't prevent the rapid nickchange
-		setTimeout( () => nick(config.nick, 100));
+		nick(temp);
 	}
 
 	if (command.startsWith('n')){
@@ -112,8 +113,9 @@ rl.on('line', line => {
  * @param {String} nick 
  */
 function nick(nick) {
-	config.nick = nick
-	connection.nick(nick)
+	config.nick = nick;
+	connection.nick(nick);
+	rl.setPrompt(nick);
 }
 
 connection.once('ready', () => {
