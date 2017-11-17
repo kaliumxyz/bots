@@ -53,7 +53,7 @@ connection.on('send-event', message => {
 	memory.push(data);
 
 	if (new RegExp(`@${config.nick}`).test(data.content))
-		if(config.override)
+		if(!config.override)
 			stack.push(setTimeout( () => {
 				connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), data.id);
 				stack.shift()

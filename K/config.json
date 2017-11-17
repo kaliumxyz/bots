@@ -3,8 +3,9 @@
 	"room": "xkcd",
 	"dataset": "dataset.txt",
 	"human": 1,
+	"override": true,
 	"reply": {
 		"delay": 5,
-		"override": true
+		"type": "markov"
 	}
 }

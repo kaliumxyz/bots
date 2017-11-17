@@ -10,9 +10,10 @@ configure a config.json file or use the defaults, the format is as below.
 	"room": "xkcd",
 	"dataset": "dataset.txt",
 	"human": 1,
+	"override": true,
 	"reply": {
 		"delay": 5,
-		"override": true
+		"type": "markov"
 	}
 }
 
