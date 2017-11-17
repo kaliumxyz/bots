@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+'use strict';
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
@@ -11,8 +13,7 @@ const config = require('./config.json');
 // allows the user to override any setting in the config file by affixing --{setting} {option} when calling the script 
 const args = process.argv
 		.join()
-		.match(/-\w+,\w+/g);
-
+		.match(/-\w+,\w+/g) || [];
 args.forEach( arg => {
 		let key = arg
 			.split(',')[0]
