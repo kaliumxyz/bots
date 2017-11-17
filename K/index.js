@@ -39,7 +39,7 @@ function log(...text) {
 /* memory */
 const memory = []; // post memory
 const stack = []; // planned event stack (timeouts) to allow us to override default acctions from CLI
-let afkCounter = config.afk.delay;
+let afkCounter = config.afk.delay * 1000;
 
 const rl = readline.createInterface({
 	prompt: `${config.nick}>`,
@@ -74,7 +74,7 @@ rl.on('line', line => {
 
 	if (line.startsWith('post')){
 		connection.post(line.slice(5));
-		connection.once('send-reply', post => memory.push(post));
+		connection.once('send-reply', post => memory.push(post.data));
 		clearTimeout(stack.shift());
 	}
 
@@ -95,7 +95,7 @@ rl.on('line', line => {
 		connection.nick(config.nick + " - AFK");
 
 	rl.prompt();
-	const afkCounter = config.afk.delay;
+	afkCounter = config.afk.delay * 1000;
 
 });
 
