@@ -39,7 +39,7 @@ function log(...text) {
 /* memory */
 const memory = []; // post memory
 const stack = []; // planned event stack (timeouts) to allow us to override default acctions from CLI
-const afkCounter = config.afk.delay;
+let afkCounter = config.afk.delay;
 
 const rl = readline.createInterface({
 	prompt: `${config.nick}>`,
