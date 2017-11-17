@@ -40,7 +40,7 @@ will set the bots name to `><>`.
 $ node . --room music
 ```
 
-There are no prefixes to commands, all commands are declarative english, the commands are as follows:
+There are no prefixes to commands, all commands can be either send in declarative English or as the first letter of the command; here follows a list of the commands:
 ### post
 Post a single post to the root thread.
 ```
