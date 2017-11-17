@@ -88,24 +88,33 @@ rl.on('line', line => {
 	}
 
 	if (command.startsWith('m')) {
-		connection.nick(config.nick + " - BOT");
+		nick(config.nick + " - BOT");
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
-		connection.nick(config.nick);
+		// add a delay so euph doesn't prevent the rapid nickchange
+		setTimeout( () => nick(config.nick, 100));
 	}
 
 	if (command.startsWith('n')){
 		config.nick = line;
-		connection.nick(config.nick);
+		nick(config.nick);
 	}
 
 	if (command.startsWith('a'))
-		connection.nick(config.nick + " - AFK");
+		nick(config.nick + " - AFK");
 
 	rl.prompt();
 	afkCounter = config.afk.delay * 1000;
 
 });
 
+/**
+ * sets the nick to {nick}
+ * @param {String} nick 
+ */
+function nick(nick) {
+	config.nick = nick
+	connection.nick(nick)
+}
 
 connection.once('ready', () => {
 	connection.nick(config.nick)
