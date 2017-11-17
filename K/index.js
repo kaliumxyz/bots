@@ -69,29 +69,33 @@ connection.on('send-event', message => {
 
 
 rl.on('line', line => {
-	if (line.startsWith('q'))
+	line = line.split(' ');
+	let command = line.shift();
+	line = line.join(' ');
+	if (command.startsWith('q'))
 		process.exit();
 
-	if (line.startsWith('p')){
-		connection.post(line.slice(5));
+	if (command.startsWith('p')){
+		command.shift
+		connection.post(line);
 		connection.once('send-reply', post => memory.push(post.data));
 		clearTimeout(stack.shift());
 	}
 
-	if (line.startsWith('r')){
-		connection.post(line.slice(6), memory[memory.length-1].id);
+	if (command.startsWith('r')){
+		connection.post(line, memory[memory.length-1].id);
 		clearTimeout(stack.shift());
 	}
 
-	if (line.startsWith('m'))
+	if (command.startsWith('m'))
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
 
-	if (line.startsWith('n')){
-		config.nick = line.slice(5);
+	if (command.startsWith('n')){
+		config.nick = line;
 		connection.nick(config.nick);
 	}
 
-	if (line.startsWith('a'))
+	if (command.startsWith('a'))
 		connection.nick(config.nick + " - AFK");
 
 	rl.prompt();
