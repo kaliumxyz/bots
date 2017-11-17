@@ -42,7 +42,7 @@ const stack = []; // planned event stack (timeouts) to allow us to override defa
 let afkCounter = config.afk.delay * 1000;
 
 const rl = readline.createInterface({
-	prompt: `${config.nick}>`,
+	prompt: `${config.nick}${config.prompt}`,
 	input: process.stdin,
 	output: process.stdout,
 	terminal: true
@@ -92,7 +92,7 @@ rl.on('line', line => {
 		nick(config.nick + " - BOT");
 		connection.post(markov.end(Math.ceil(Math.random() * 100 % 40)).process(), memory[memory.length-1].id);
 		// add a delay so euph doesn't prevent the rapid nickchange
-		nick(temp);
+		setInterval( () => nick(temp), 100);
 	}
 
 	if (command.startsWith('n')){
@@ -112,10 +112,10 @@ rl.on('line', line => {
  * sets the nick to {nick}
  * @param {String} nick 
  */
-function nick(nick) {
+function nick(nick = "><>") {
 	config.nick = nick;
 	connection.nick(nick);
-	rl.setPrompt(nick);
+	rl.setPrompt(`${nick}${config.prompt}`);
 }
 
 connection.once('ready', () => {
