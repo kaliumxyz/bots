@@ -51,7 +51,7 @@ const rl = readline.createInterface({
 connection.on('send-event', message => {
 	// log anything posted
 	const data = message.data;
-	log(`${data.sender.name}: ${data.sender.id}> ${data.content}`);
+	log(`${data.parent || ""}:${data.id}:${data.sender.name}: ${data.sender.id}> ${data.content}`);
 	memory.push(data);
 
 	if (new RegExp(`@${config.nick}`).test(data.content))
