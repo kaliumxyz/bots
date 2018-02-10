@@ -1,0 +1,19 @@
+{
+  "name": "janus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "instant-connection": "^0.3.3"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0"
+  }
+}
