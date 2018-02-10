@@ -1,9 +1,9 @@
 'use strict';
 /* libs */
 const Connection = require('instant-connection')
-const chalk = require('chalk')
 const fs = require('fs')
 const path = require('path')
+const chalk = require('chalk')
 
 const nick = "janus"
 
@@ -55,16 +55,14 @@ connection.once('ready', _ => {
 					connection.post(tellstack[ev.data.nick].shift(), ev.id)
 			}
 
-
-		
+		log(`${ev.data.nick}: ${ev.data.text}`)
+		console.log(`${ev.data.nick}: ${ev.data.text}`)
 		}
-		log(chalk.blue(`${ev.data.nick}: ${ev.data.text}`))
-		console.log(chalk.blue(`${ev.data.nick}: ${ev.data.text}`))
 	})
 	// join event (someone joining)
-	connection.on('joined', ev => log(chalk.green(`${ev.data.nick || 'someone'} joined`)))
+	connection.on('joined', ev => log(`${ev.data.nick || 'someone'} joined`))
 	// part event (someone leaving)
-	connection.on('left', ev => log(chalk.red(`${ev.data.nick || 'someone'} left`)))
+	connection.on('left', ev => log(`${ev.data.nick || 'someone'} left`))
 
 	// join event (someone joining)
 	connection.on('joined', ev => console.log(chalk.green(`${ev.data.nick || 'someone'} joined`)))
